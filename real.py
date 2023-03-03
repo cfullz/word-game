@@ -1,6 +1,7 @@
 import arcade
 import arcade.gui as gui
 import random
+import os
 
 # Constants
 SCREEN_WIDTH = 1000
@@ -10,11 +11,11 @@ SCREEN_TITLE = "Word Game"
 
 
 
-
 class MainMenu(arcade.View):
     def __init__(self):
         super().__init__()
-
+        self.background = None
+        self.background = arcade.load_texture("yipee.jpg")
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
         self.manager = arcade.gui.UIManager()
@@ -59,11 +60,104 @@ class MainMenu(arcade.View):
 
     def on_click_start(self, event):
         print("Start:", event)
-        game_view = GameView()
+        choice = DifficultyChoice()
+        self.window.show_view(choice)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_lrwh_rectangle_textured(0, 0,
+                                            SCREEN_WIDTH, SCREEN_HEIGHT,
+                                            self.background)
+        self.manager.draw()
+
+class DifficultyChoice(arcade.View):
+    def __init__(self):
+        super().__init__()
+
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Set background color
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+
+        # Create a vertical BoxGroup to align buttons
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        # Create the buttons
+        start_button = arcade.gui.UIFlatButton(text="Easy Mode", width=200)
+        self.v_box.add(start_button.with_space_around(bottom=20))
+
+        medium_button = arcade.gui.UIFlatButton(text="Medium Mode", width=200)
+        self.v_box.add(medium_button.with_space_around(bottom=20))
+
+        hard_button = arcade.gui.UIFlatButton(text="Hard Mode", width=200)
+        self.v_box.add(hard_button.with_space_around(bottom=20))
+
+
+        # Again, method 1. Use a child class to handle events.
+       
+
+        # --- Method 2 for handling click events,
+        # assign self.on_click_start as callback
+        start_button.on_click = self.on_click_start
+
+        # --- Method 3 for handling click events,
+        # use a decorator to handle on_click events
+            
+
+        @medium_button.event("on_click")
+        def on_click_settings(event):
+            print("Medium:", event)
+            medium_mode = MediumMode()
+            self.window.show_view(medium_mode)
+
+        @hard_button.event("on_click")
+        def on_click_settings(event):
+            print("Hard:", event)
+            hard_mode = HardMode()
+            self.window.show_view(hard_mode)
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="bottom",
+                child=self.v_box)
+        )
+
+    def on_click_start(self, event):
+        print("Start:", event)
+        game_view = EasyMode()
         self.window.show_view(game_view)
 
     def on_draw(self):
         self.clear()
+        arcade.draw_text("Difficulty Selection",
+                         start_x=0, start_y=self.window.height - 100,
+                         width=self.window.width,
+                         font_size=70,
+                         align="center",
+                         color=arcade.color.BLACK)
+        arcade.draw_text("Easy Mode: Words longer than 4 letters.",
+                         start_x=0, start_y=self.window.height - 200,
+                         width=self.window.width,
+                         font_size=30,
+                         align="center",
+                         color=arcade.color.BLACK)
+        arcade.draw_text("Medium Mode: Words longer than 7 letters.",
+                         start_x=0, start_y=self.window.height - 300,
+                         width=self.window.width,
+                         font_size=30,
+                         align="center",
+                         color=arcade.color.BLACK)
+        arcade.draw_text("Hard Mode: Words longer than 10 letters.",
+                         start_x=0, start_y=self.window.height - 400,
+                         width=self.window.width,
+                         font_size=30,
+                         align="center",
+                         color=arcade.color.BLACK)                
         self.manager.draw()
 
 class TutorialView(arcade.View):
@@ -175,7 +269,7 @@ class GameOver(arcade.View):
         
 
 
-class GameView(arcade.View):
+class EasyMode(arcade.View):
     def __init__(self):
         
         super().__init__()
@@ -317,7 +411,303 @@ class GameView(arcade.View):
         self.timer_text.draw()
 
         if self.total_time <= 0.0:
-            f = open("ScoreCounter.txt", "a")
+            f = open("ScoresEasy.txt", "a")
+            f.write(str(self.score) + "\n")
+            f.close()
+            game_over = GameOver()
+            self.window.show_view(game_over)
+
+class MediumMode(arcade.View):
+    def __init__(self):
+        
+        super().__init__()
+        self.manager = gui.UIManager()
+        self.manager.enable()
+
+        # A Camera that can be used to draw GUI elements
+        self.gui_camera = None
+
+        # Keep track of the score
+        self.score = 0
+
+        arcade.set_background_color(arcade.color.BEIGE)
+        
+        # Create a text label
+        self.label = arcade.gui.UILabel(
+            text="",
+            text_color=arcade.color.DARK_RED,
+            width=350,
+            height=40,
+            font_size=19,
+            font_name="Kenney Future",
+            align="center")
+
+        # Create an text input field
+        self.input_field = gui.UIInputText(
+          color=arcade.color.DARK_BLUE_GRAY,
+          font_size=19,
+          width=200,
+          )
+
+        # Create the score text
+
+        self.scoreText = arcade.gui.UILabel(
+            text="",
+            text_color=arcade.color.DARK_RED,
+            width=350,
+            height=40,
+            font_size=19,
+            font_name="Kenney Future",
+            align="center"
+        )
+
+        # Create a button
+        submit_button = gui.UIFlatButton(
+          color=arcade.color.DARK_BLUE_GRAY,
+          text='Submit')
+        # --- Method 2 for handling click events,
+        # assign self.on_click_start as callback
+        submit_button.on_click = self.on_click 
+        
+        self.v_box = gui.UIBoxLayout()
+        self.v_box.add(self.scoreText)
+        self.v_box.add(self.label.with_space_around(bottom=0))
+        self.v_box.add(self.input_field)
+        self.v_box.add(submit_button)
+       
+        
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="center_y",
+                child=self.v_box)
+        )
+
+        self.total_time = 10
+        self.timer_text = arcade.Text(
+            text="01:00:00",
+            start_x=SCREEN_WIDTH // 2,
+            start_y=SCREEN_HEIGHT // 2 + 100,
+            color=arcade.color.BLACK,
+            font_size=30,
+            anchor_x="center",
+        )
+    def setup(self):
+        self.total_time = 0.0
+
+
+    def update_text(self):
+        
+        if len(self.input_field.text) > 7:
+                with open(r'WordList.txt', 'r') as file:
+                # read all content from a file using read()
+                    content = file.read()
+                    # check if string present or not
+                    if self.input_field.text in content:
+                            print(f"updating the label with input text '{self.input_field.text}'")
+                            self.label.text = ('Word Works!')
+                            self.score += 1
+                            self.scoreText.text = ("Score: " + str(self.score))
+                            print(self.score)
+                            self.input_field.text = ('')
+                    else:
+                        print(f"word not found")
+                        self.label.text = ("Try again!")
+                        self.input_field.text = ('')
+            
+        else:
+            print(f"word not found end")
+            self.label.text = ('no')
+            self.input_field.text = ('')
+
+    def on_update(self, delta_time):
+        
+        self.total_time -= delta_time
+
+        # Calculate minutes
+        minutes = int(self.total_time) // 60
+
+        # Calculate seconds by using a modulus (remainder)
+        seconds = int(self.total_time) % 60
+
+        # Calculate 100s of a second
+        seconds_100s = int((self.total_time - seconds) * 100)
+
+        # Use string formatting to create a new text string for our timer
+        self.timer_text.text = f"{minutes:02d}:{seconds:02d}:{seconds_100s:02d}"
+        
+
+    
+            
+        
+
+        
+
+    def on_click(self, event):
+        
+        print(f"click-event caught: {event}")
+        self.update_text()
+
+    def on_draw(self):
+        self.clear()
+        
+        arcade.start_render()
+        self.manager.draw()
+        # Activate the GUI camera before drawing GUI elements
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 10, 10, arcade.csscolor.WHITE, 18)
+        self.timer_text.draw()
+
+        if self.total_time <= 0.0:
+            f = open("ScoresMed.txt", "a")
+            f.write(str(self.score) + "\n")
+            f.close()
+            game_over = GameOver()
+            self.window.show_view(game_over)
+
+class HardMode(arcade.View):
+    def __init__(self):
+        
+        super().__init__()
+        self.manager = gui.UIManager()
+        self.manager.enable()
+
+        # A Camera that can be used to draw GUI elements
+        self.gui_camera = None
+
+        # Keep track of the score
+        self.score = 0
+
+        arcade.set_background_color(arcade.color.BEIGE)
+        
+        # Create a text label
+        self.label = arcade.gui.UILabel(
+            text="",
+            text_color=arcade.color.DARK_RED,
+            width=350,
+            height=40,
+            font_size=19,
+            font_name="Kenney Future",
+            align="center")
+
+        # Create an text input field
+        self.input_field = gui.UIInputText(
+          color=arcade.color.DARK_BLUE_GRAY,
+          font_size=19,
+          width=200,
+          )
+
+        # Create the score text
+
+        self.scoreText = arcade.gui.UILabel(
+            text="",
+            text_color=arcade.color.DARK_RED,
+            width=350,
+            height=40,
+            font_size=19,
+            font_name="Kenney Future",
+            align="center"
+        )
+
+        # Create a button
+        submit_button = gui.UIFlatButton(
+          color=arcade.color.DARK_BLUE_GRAY,
+          text='Submit')
+        # --- Method 2 for handling click events,
+        # assign self.on_click_start as callback
+        submit_button.on_click = self.on_click 
+        
+        self.v_box = gui.UIBoxLayout()
+        self.v_box.add(self.scoreText)
+        self.v_box.add(self.label.with_space_around(bottom=0))
+        self.v_box.add(self.input_field)
+        self.v_box.add(submit_button)
+       
+        
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="center_y",
+                child=self.v_box)
+        )
+
+        self.total_time = 10
+        self.timer_text = arcade.Text(
+            text="01:00:00",
+            start_x=SCREEN_WIDTH // 2,
+            start_y=SCREEN_HEIGHT // 2 + 100,
+            color=arcade.color.BLACK,
+            font_size=30,
+            anchor_x="center",
+        )
+    def setup(self):
+        self.total_time = 0.0
+
+
+    def update_text(self):
+        
+        if len(self.input_field.text) > 10:
+                with open(r'WordList.txt', 'r') as file:
+                # read all content from a file using read()
+                    content = file.read()
+                    # check if string present or not
+                    if self.input_field.text in content:
+                            print(f"updating the label with input text '{self.input_field.text}'")
+                            self.label.text = ('Word Works!')
+                            self.score += 1
+                            self.scoreText.text = ("Score: " + str(self.score))
+                            print(self.score)
+                            self.input_field.text = ('')
+                    else:
+                        print(f"word not found")
+                        self.label.text = ("Try again!")
+                        self.input_field.text = ('')
+            
+        else:
+            print(f"word not found end")
+            self.label.text = ('no')
+            self.input_field.text = ('')
+
+    def on_update(self, delta_time):
+        
+        self.total_time -= delta_time
+
+        # Calculate minutes
+        minutes = int(self.total_time) // 60
+
+        # Calculate seconds by using a modulus (remainder)
+        seconds = int(self.total_time) % 60
+
+        # Calculate 100s of a second
+        seconds_100s = int((self.total_time - seconds) * 100)
+
+        # Use string formatting to create a new text string for our timer
+        self.timer_text.text = f"{minutes:02d}:{seconds:02d}:{seconds_100s:02d}"
+        
+
+    
+            
+        
+
+        
+
+    def on_click(self, event):
+        
+        print(f"click-event caught: {event}")
+        self.update_text()
+
+    def on_draw(self):
+        self.clear()
+        
+        arcade.start_render()
+        self.manager.draw()
+        # Activate the GUI camera before drawing GUI elements
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 10, 10, arcade.csscolor.WHITE, 18)
+        self.timer_text.draw()
+
+        if self.total_time <= 0.0:
+            f = open("ScoresHard.txt", "a")
             f.write(str(self.score) + "\n")
             f.close()
             game_over = GameOver()
