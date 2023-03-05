@@ -226,7 +226,7 @@ class TutorialView(arcade.View):
                 child=self.v_box)
         )
         start_button.on_click = self.on_click_start
-
+        
         @start_button.event("on_click")
         def on_click_settings(event):
             print("Tutorial:", event)
@@ -238,6 +238,7 @@ class TutorialView(arcade.View):
         arcade.set_background_color(arcade.color.COLUMBIA_BLUE)
         # This draws our UI elements
         self.ui_manager.draw()
+        # Draws the instructions
         arcade.draw_text("Tutorial",
                          start_x=0, start_y=self.window.height - 55,
                          width=self.window.width,
