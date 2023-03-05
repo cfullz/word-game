@@ -226,7 +226,7 @@ class TutorialView(arcade.View):
                 child=self.v_box)
         )
         start_button.on_click = self.on_click_start
-        
+
         @start_button.event("on_click")
         def on_click_settings(event):
             print("Tutorial:", event)
