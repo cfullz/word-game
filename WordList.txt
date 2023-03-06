@@ -2075,10 +2075,6 @@ bison
 bisque
 bistro
 bit
-bitch
-bitches
-bitching
-bitchy
 bite
 bites
 biting
@@ -9190,13 +9186,6 @@ fry
 fryer
 frying
 fuchsia
-fuck
-fucked
-fucker
-fuckers
-fucking
-fucks
-fuckup
 fudge
 fudged
 fudging
@@ -14403,9 +14392,6 @@ motels
 moth
 mothballs
 mother
-motherfucker
-motherfuckers
-motherfucking
 motherhood
 mothering
 motherless

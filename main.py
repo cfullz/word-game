@@ -81,7 +81,7 @@ class MainMenu(arcade.View):
         print("Start:", event)
         choice = DifficultyChoice2()
         self.window.show_view(choice)
-
+    # Draw background image and buttons on start screen
     def on_draw(self):
         self.clear()
         arcade.set_background_color(arcade.color.COLUMBIA_BLUE)
@@ -380,7 +380,7 @@ class GameOver(arcade.View):
                 child=self.v_box)
         )
         start_button.on_click = self.on_click_start
-
+        # Define destination for main menu button
         @start_button.event("on_click")
         def on_click_settings(event):
             print("Tutorial:", event)
@@ -408,12 +408,12 @@ class GameOver(arcade.View):
 
     def on_click_start(self, event):
         print("Start:", event)
-        
+    # Quit program when ESC key is clicked
     def on_key_press(self, symbol, modifier):
         if symbol == arcade.key.ESCAPE:
             arcade.exit()
 
-
+# Create scene for Easy Mode
 class EasyMode(arcade.View):
     def __init__(self):
         
@@ -563,7 +563,7 @@ class EasyMode(arcade.View):
             f.close()
             game_over = GameOver()
             self.window.show_view(game_over)
-
+# Create scene for Medium mode
 class MediumMode(arcade.View):
     def __init__(self):
         
@@ -716,7 +716,7 @@ class MediumMode(arcade.View):
             f.close()
             game_over = GameOver()
             self.window.show_view(game_over)
-
+# Create scene for Hard mode
 class HardMode(arcade.View):
     def __init__(self):
         
@@ -804,6 +804,7 @@ class HardMode(arcade.View):
                     content = file.read()
                     # check if string present or not
                     if self.input_field.text in content:
+                        # check if word has been used or not
                         if self.input_field.text in self.usedwords:
                             print(f"word already used")
                             self.label.text = ("Try again!")
@@ -827,7 +828,7 @@ class HardMode(arcade.View):
             self.input_field.text = ('')
 
     def on_update(self, delta_time):
-        
+        # remove time from starting time
         self.total_time -= delta_time
 
         # Calculate minutes
