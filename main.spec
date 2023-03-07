@@ -8,7 +8,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('ScoresEasy.txt', '.'), ('ScoresMed.txt', '.'), ('ScoresHard.txt', '.'), ('FBLA_SLC_Computer_Game_Presentation.png', '.'), ('WordList.txt', '.')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
