@@ -404,6 +404,12 @@ class GameOver(arcade.View):
                          font_size=55,
                          align="center",
                          color=arcade.color.BLACK)
+        arcade.draw_text("Good job! That was a great attempt.",
+                         start_x=0, start_y=self.window.height - 500,
+                         width=self.window.width,
+                         font_size=55,
+                         align="center",
+                         color=arcade.color.BLACK)
         self.manager.draw()
 
     def on_click_start(self, event):
@@ -494,7 +500,9 @@ class EasyMode(arcade.View):
     def setup(self):
         self.total_time = 0.0
 
-    
+    def on_key_press(self, symbol, modifier):
+        if symbol == arcade.key.ENTER:
+            self.update_text()
 
     def update_text(self):
         
@@ -642,6 +650,9 @@ class MediumMode(arcade.View):
     def setup(self):
         self.total_time = 0.0
 
+    def on_key_press(self, symbol, modifier):
+        if symbol == arcade.key.ENTER:
+            self.update_text()
 
     def update_text(self):
         
@@ -794,6 +805,10 @@ class HardMode(arcade.View):
         )
     def setup(self):
         self.total_time = 0.0
+
+    def on_key_press(self, symbol, modifier):
+        if symbol == arcade.key.ENTER:
+            self.update_text()
 
 
     def update_text(self):
